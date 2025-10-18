@@ -34,7 +34,7 @@ app.get('/notes/:noteId', (req, res) => {
 });
 
 app.get('/test-error', async (req, res) => {
-  throw new Error('Cannot find notes');
+  throw new Error('Simulated server error');
 });
 
 app.use((req, res) => {
