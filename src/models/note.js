@@ -25,7 +25,7 @@ const noteSchema = new Schema(
         'Important',
         'Todo',
       ],
-      default: ['Todo'],
+      default: 'Todo',
     },
   },
   {
