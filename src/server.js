@@ -3,9 +3,9 @@ import express from 'express';
 import cors from 'cors';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
-import errorHandler from './middleweare/errorHandler.js';
-import logger from './middleweare/logger.js';
-import notFoundHandler from './middleweare/notFoundHandler.js';
+import errorHandler from './middleware/errorHandler.js';
+import logger from './middleware/logger.js';
+import notFoundHandler from './middleware/notFoundHandler.js';
 
 import notesRouters from './routes/notesRoutes.js';
 
