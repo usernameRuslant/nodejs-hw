@@ -14,16 +14,16 @@ import {
   updateNoteSchema,
 } from '../validations/notesValidation.js';
 
-const notesRouter = Router();
+const notesRoutes = Router();
 
-notesRouter.get('/', celebrate(getAllNotesSchema), getAllNotes);
+notesRoutes.get('/', celebrate(getAllNotesSchema), getAllNotes);
 
-notesRouter.get('/:noteId', celebrate(noteIdSchema), getNoteById);
+notesRoutes.get('/:noteId', celebrate(noteIdSchema), getNoteById);
 
-notesRouter.post('/', celebrate(createNoteSchema), createNote);
+notesRoutes.post('/', celebrate(createNoteSchema), createNote);
 
-notesRouter.delete('/:noteId', celebrate(noteIdSchema), deleteNote);
+notesRoutes.delete('/:noteId', celebrate(noteIdSchema), deleteNote);
 
-notesRouter.patch('/:noteId', celebrate(updateNoteSchema), updateNote);
+notesRoutes.patch('/:noteId', celebrate(updateNoteSchema), updateNote);
 
-export default notesRouter;
+export default notesRoutes;
