@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import Session from '../models/Session.js';
+import Session from '../models/session.js';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/time.js';
 
 export const createSession = (userId) => {

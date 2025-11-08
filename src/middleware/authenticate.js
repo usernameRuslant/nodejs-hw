@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 
-import Session from '../models/Session.js';
-import User from '../models/User.js';
+import Session from '../models/session.js';
+import User from '../models/user.js';
 
 const authenticate = async (req, res, next) => {
   if (!req.cookies.accessToken)
