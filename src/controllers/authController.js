@@ -16,6 +16,9 @@ export const registerUser = async (req, res) => {
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
 
+  const session = await createSession(newUser._id);
+  setSessionCookies(res, session);
+
   res.status(201).json(newUser);
 };
 
