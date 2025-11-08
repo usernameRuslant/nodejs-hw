@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import Session from '../models/session.js';
+import Session from '../models/Session.js';
 
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
