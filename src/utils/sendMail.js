@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
-import handlebars from 'handlebars';
+import hbs from 'handlebars';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_FROM } =
   process.env;
@@ -21,7 +23,7 @@ export const sendEmail = async ({
   context = {},
 }) => {
   const source = await fs.readFile(templatePath, 'utf-8');
-  const template = handlebars.compile(source);
+  const template = hbs.compile(source);
   const html = template(context);
 
   const mailOptions = {
@@ -31,5 +33,12 @@ export const sendEmail = async ({
     html,
   };
 
-  return transporter.sendMail(mailOptions);
+  return transporter
+    .sendMail(mailOptions)
+    .then((info) => {
+      return info;
+    })
+    .catch((err) => {
+      throw err;
+    });
 };

@@ -97,7 +97,8 @@ export const requestResetEmail = async (req, res, next) => {
           resetLink,
         },
       });
-    } catch {
+    } catch (err) {
+      console.error('Email send error:', err);
       return next(
         createHttpError(
           500,
@@ -107,6 +108,29 @@ export const requestResetEmail = async (req, res, next) => {
     }
 
     res.status(200).json({ message: 'Password reset email sent successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch {
+      throw createHttpError(401, 'Invalid or expired token');
+    }
+
+    const user = await User.findById(decoded.sub);
+    if (!user) throw createHttpError(404, 'User not found');
+
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
     next(error);
   }
