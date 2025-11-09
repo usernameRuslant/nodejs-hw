@@ -31,8 +31,8 @@ export const loginUser = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) throw createHttpError(401, 'Invalid credentials');
 
-  const inValidPassword = await bcrypt.compare(password, user.password);
-  if (!inValidPassword) throw createHttpError(401, 'Invalid credentials');
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) throw createHttpError(401, 'Invalid credentials');
 
   await Session.findOneAndDelete({ userId: user._id });
 
@@ -124,7 +124,7 @@ export const resetPassword = async (req, res, next) => {
       throw createHttpError(401, 'Invalid or expired token');
     }
 
-    const user = await User.findById(decoded.sub);
+    const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
     if (!user) throw createHttpError(404, 'User not found');
 
     user.password = await bcrypt.hash(password, 10);
