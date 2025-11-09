@@ -12,6 +12,7 @@ import notFoundHandler from './middleware/notFoundHandler.js';
 
 import authRoutes from './routes/authRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -23,6 +24,7 @@ app.use(cookieParser());
 
 app.use('/auth', authRoutes);
 app.use('/notes', notesRoutes);
+app.use('/users', userRoutes);
 
 app.use(notFoundHandler);
 //
