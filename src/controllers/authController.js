@@ -1,6 +1,10 @@
 import User from '../models/user.js';
 import Session from '../models/session.js';
 
+import jwt from 'jsonwebtoken';
+const { JWT_SECRET, FRONTEND_DOMAIN } = process.env;
+import { sendEmail } from '../utils/sendMail.js';
+
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { createSession, setSessionCookies } from '../services/auth.js';
@@ -68,4 +72,42 @@ export const logoutUser = async (req, res) => {
   res.clearCookie('sessionId');
 
   res.status(204).json();
+};
+
+export const requestResetEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(200)
+        .json({ message: 'Password reset email sent successfully' });
+    }
+    const token = jwt.sign({ sub: user._id, email: user.email }, JWT_SECRET, {
+      expiresIn: '15m',
+    });
+    const resetLink = `${FRONTEND_DOMAIN}/reset-password?token=${token}`;
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Password reset request',
+        templatePath: 'src/templates/reset-password-email.html',
+        context: {
+          username: user.username,
+          resetLink,
+        },
+      });
+    } catch {
+      return next(
+        createHttpError(
+          500,
+          'Failed to send the email, please try again later.',
+        ),
+      );
+    }
+
+    res.status(200).json({ message: 'Password reset email sent successfully' });
+  } catch (error) {
+    next(error);
+  }
 };
