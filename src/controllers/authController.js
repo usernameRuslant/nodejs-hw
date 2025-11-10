@@ -1,3 +1,7 @@
+import fs from 'fs/promises';
+import handlebars from 'handlebars';
+import path from 'path';
+
 import User from '../models/user.js';
 import Session from '../models/session.js';
 
@@ -78,38 +82,45 @@ export const requestResetEmail = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) {
       return res
         .status(200)
         .json({ message: 'Password reset email sent successfully' });
     }
+
     const token = jwt.sign({ sub: user._id, email: user.email }, JWT_SECRET, {
       expiresIn: '15m',
     });
+
     const resetLink = `${FRONTEND_DOMAIN}/reset-password?token=${token}`;
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: 'Password reset request',
-        templatePath: 'src/templates/reset-password-email.html',
-        context: {
-          username: user.username,
-          resetLink,
-        },
-      });
-    } catch (err) {
-      console.error('Email send error:', err);
-      return next(
-        createHttpError(
-          500,
-          'Failed to send the email, please try again later.',
-        ),
-      );
-    }
+
+    const templatePath = path.resolve(
+      'src',
+      'templates',
+      'reset-password-email.html',
+    );
+    const source = await fs.readFile(templatePath, 'utf8');
+
+    const template = handlebars.compile(source);
+
+    const html = template({
+      username: user.username || 'користувач',
+      resetLink,
+    });
+
+    await sendEmail({
+      to: user.email,
+      subject: 'Password reset request',
+      html,
+    });
 
     res.status(200).json({ message: 'Password reset email sent successfully' });
   } catch (error) {
-    next(error);
+    console.error('Email send error:', error);
+    next(
+      createHttpError(500, 'Failed to send the email, please try again later.'),
+    );
   }
 };
 
