@@ -17,11 +17,13 @@ const nodemailerConfig = {
 
 const transport = nodemailer.createTransport(nodemailerConfig);
 
-const sendEmail = (options) => {
+export const sendEmail = async (options) => {
   const email = {
     ...options,
     from: SMTP_FROM,
   };
-  return transport.sendMail(email);
+
+  const info = await transport.sendMail(email);
+
+  return info;
 };
-export default sendEmail;
